@@ -1,6 +1,20 @@
 {
   "name": "admin-portal",
-  "version": "0.0.0",
+  "version": "1.0.0",
+
+  "author": "Michael Gokey <michael.gokey.architect@gmail.com>",
+  "description": "AdminPortal v1 application using modular Angular v16 architecture with NgRx",
+  "keywords": [
+    "Angular v16",
+    "Jest",
+    "Modules",
+    "Lazy-Loaded",
+    "Routing",
+    "NgRx",
+    "AdminPortal  v1",
+    "AdminPortal"
+  ],
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -32,13 +46,6 @@
     "@angular/cli": "^16.2.16",
     "@angular/compiler-cli": "^16.2.0",
     "@ngrx/schematics": "^16.3.0",
-    "@types/jasmine": "~4.3.0",
-    "jasmine-core": "~4.6.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.1.3"
   }
 }
