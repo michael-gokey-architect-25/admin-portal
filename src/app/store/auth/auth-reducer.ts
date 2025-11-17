@@ -1,3 +1,4 @@
+// src\app\store\auth\auth-reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import * as AuthActions from './auth-actions';
 import { User, AuthToken } from './auth-actions';

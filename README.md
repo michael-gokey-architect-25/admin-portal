@@ -1,13 +1,23 @@
-# AdminPortal v1 Angular v16 Modules with NgRx
+# AdminPortal v1 - Angular 16 Module-Based Architecture Build Guide
 
 
 
-## AdminPortal v1 application with Angular v16 architecture
+## Project Overview
 
-Based on the requirements, this is the structure of this **Angular v16 module-based application** with NgRx state management:
+AdminPortal v1 is an enterprise-grade web application built with **Angular 16** using a **traditional module-based architecture** (not standalone components). The application focuses on authentication, role-based access control (RBAC), and user management, with **NgRx** as the central state management solution.
 
 
-### Artifact Breakdown (7-8 artifacts total)
+## Core Architecture Principles
+
+### Technology Stack
+- **Angular 16.2.x** - Module-based architecture (no standalone components or signals)
+- **NgRx 16.3.x** - Complete state management suite (@ngrx/store, @ngrx/effects, @ngrx/entity, @ngrx/router-store, @ngrx/store-devtools)
+- **RxJS 7.8.x** - Reactive programming
+- **TypeScript 5.1.x** - Type safety
+- **SCSS** - Styling
+- **Jest** - Testing framework (no Karma/Jasmine)
+
+### Module Breakdown 
 
 1. **App Module** - Root module with routing configuration
 2. **Core Module** - Singleton services (AuthService, HTTP interceptors, guards)
@@ -103,4 +113,52 @@ The AdminPortal's module-based architecture is successful because it adheres to 
 AdminPortal v1. Authentication and Authorized. State management is primary.
 
 *Lets see how well I do, shall we?*
+
+-------------------
+
+## **NgRx Store**
+
+### ✅ **What We've Built**
+- ✅ `auth.actions.ts` (models, action creators)
+- ✅ `auth.reducer.ts` (state shape, state transitions)
+- ✅ `auth.selectors.ts` (memoized state queries)
+- ✅ `auth.effects.ts` (side effects, API calls)
+
+
+-------------------
+
+## **Core Module**
+
+### ✅ **What We Have**
+
+### 1. **AuthService** (`auth.service.ts`)
+- ✅ Login/Register/Logout API calls (with mock implementations)
+- ✅ Token management (set, get, clear, check expiration)
+- ✅ User profile fetching
+- ✅ Token refresh logic
+- 📝 **Note**: Replace mock methods with real API calls when backend is ready
+
+
+### 2. **AuthInterceptor** (`auth.interceptor.ts`)
+- ✅ Automatically attaches JWT token to HTTP requests
+- ✅ Excludes auth endpoints (login, register)
+- ✅ Handles 401 errors (expired token → logout)
+- ✅ Handles 403 errors (insufficient permissions)
+
+
+### 3. **AuthGuard** (`auth.guard.ts`)
+- ✅ Protects routes requiring authentication
+- ✅ Redirects to login if not authenticated
+- ✅ Stores return URL for post-login redirect
+
+
+### 4. **RoleGuard** (`role.guard.ts`)
+- ✅ Protects routes based on user role
+- ✅ Checks route data for required roles
+- ✅ Redirects to appropriate dashboard if unauthorized
+
+
+### 5. **CoreModule** (`core.module.ts`)
+- ✅ Registers all services, guards, and interceptors
+- ✅ Prevents re-import (singleton pattern)
 
