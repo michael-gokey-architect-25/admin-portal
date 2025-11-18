@@ -1,1 +1,59 @@
-<p>header works!</p>
+<!-- src/app/layout/components/header/header.component.html -->
+
+<header class="header">
+  <div class="header-content">
+    <!-- Logo and Menu Toggle -->
+    <div class="header-left">
+      <button 
+        class="menu-toggle" 
+        (click)="toggleSidebar.emit()"
+        aria-label="Toggle menu">
+        <span class="hamburger-icon">☰</span>
+      </button>
+      
+      <div class="logo">
+        <h1>AdminPortal</h1>
+      </div>
+    </div>
+
+    <!-- User Menu -->
+    <div class="header-right">
+      <div class="user-menu" *ngIf="user$ | async as user">
+        <button 
+          class="user-button" 
+          (click)="toggleUserMenu()"
+          [class.active]="showUserMenu">
+          <div class="user-avatar">
+            {{ userInitials$ | async }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ userDisplayName$ | async }}</span>
+            <span class="user-role">{{ (userRole$ | async) | userRole }}</span>
+          </div>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="user-dropdown" *ngIf="showUserMenu">
+          <a class="dropdown-item" routerLink="/dashboard">
+            <span class="icon">📊</span>
+            Dashboard
+          </a>
+          <a class="dropdown-item" routerLink="/profile">
+            <span class="icon">👤</span>
+            Profile
+          </a>
+          <a class="dropdown-item" routerLink="/settings">
+            <span class="icon">⚙️</span>
+            Settings
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout" (click)="onLogout()">
+            <span class="icon">🚪</span>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
