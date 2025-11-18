@@ -1,0 +1,393 @@
+// src/app/features/dashboard/components/manager-dashboard/manager-dashboard.component.scss
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+
+  // Dashboard Header
+  .dashboard-header {
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+
+      .header-text {
+        .dashboard-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #111827;
+          margin: 0 0 0.5rem 0;
+        }
+
+        .dashboard-subtitle {
+          font-size: 1rem;
+          color: #6b7280;
+          margin: 0;
+
+          strong {
+            color: #3b82f6;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+
+  // Team Metrics
+  .metrics-section {
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+
+      .metric-card {
+        .metric-content {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+
+          .metric-icon {
+            font-size: 3rem;
+            flex-shrink: 0;
+          }
+
+          .metric-info {
+            flex: 1;
+
+            .metric-label {
+              font-size: 0.875rem;
+              font-weight: 500;
+              color: #6b7280;
+              margin: 0 0 0.5rem 0;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            }
+
+            .metric-value {
+              font-size: 2rem;
+              font-weight: 700;
+              color: #111827;
+              margin: 0 0 0.25rem 0;
+            }
+
+            .metric-subtitle {
+              font-size: 0.75rem;
+              color: #9ca3af;
+              margin: 0;
+            }
+          }
+        }
+
+        // Color variants
+        &.metric-blue .metric-icon { color: #3b82f6; }
+        &.metric-green .metric-icon { color: #10b981; }
+        &.metric-purple .metric-icon { color: #8b5cf6; }
+        &.metric-orange .metric-icon { color: #f59e0b; }
+      }
+    }
+  }
+
+
+  // Team Members Section
+  .team-section {
+    .team-list {
+      // Desktop table view
+      .team-table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead {
+          background-color: #f9fafb;
+
+          th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e5e7eb;
+          }
+        }
+
+        tbody {
+          .team-row {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: #f9fafb;
+            }
+
+            &:focus-within {
+              background-color: #f3f4f6;
+            }
+
+            td {
+              padding: 1rem;
+              font-size: 0.875rem;
+              color: #374151;
+
+              .member-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+
+                .member-avatar {
+                  width: 2.5rem;
+                  height: 2.5rem;
+                  border-radius: 50%;
+                  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                  color: white;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 600;
+                  font-size: 0.875rem;
+                  flex-shrink: 0;
+                }
+
+                .member-name {
+                  font-weight: 500;
+                  color: #111827;
+                }
+              }
+
+              .status-badge {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: capitalize;
+
+                &.status-active {
+                  background-color: #d1fae5;
+                  color: #065f46;
+                }
+
+                &.status-away {
+                  background-color: #fef3c7;
+                  color: #92400e;
+                }
+
+                &.status-offline {
+                  background-color: #e5e7eb;
+                  color: #6b7280;
+                }
+              }
+            }
+          }
+        }
+      }
+
+
+      // Mobile card view (hidden by default)
+      .team-cards {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        // Hide table on mobile
+        .team-table {
+          display: none;
+        }
+        // Show cards on mobile
+        .team-cards {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+          .member-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+
+            .member-card-header {
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              margin-bottom: 1rem;
+
+              .member-avatar {
+                width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 1rem;
+                flex-shrink: 0;
+              }
+
+              .member-details {
+                flex: 1;
+
+                .member-name {
+                  font-size: 1rem;
+                  font-weight: 600;
+                  color: #111827;
+                  margin: 0 0 0.25rem 0;
+                }
+
+                .member-role {
+                  font-size: 0.875rem;
+                  color: #6b7280;
+                  margin: 0;
+                }
+              }
+
+              .status-badge {
+                display: inline-block;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: capitalize;
+
+                &.status-active {
+                  background-color: #d1fae5;
+                  color: #065f46;
+                }
+
+                &.status-away {
+                  background-color: #fef3c7;
+                  color: #92400e;
+                }
+
+                &.status-offline {
+                  background-color: #e5e7eb;
+                  color: #6b7280;
+                }
+              }
+            }
+
+            .member-card-body {
+              display: flex;
+              flex-direction: column;
+              gap: 0.75rem;
+
+              .member-stat {
+                font-size: 0.875rem;
+                color: #6b7280;
+                margin: 0;
+
+                strong {
+                  color: #111827;
+                  font-weight: 600;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  // Recent Activity Section
+  .activity-section {
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+
+      .activity-item {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+
+        &:last-child {
+          border-bottom: none;
+        }
+        .activity-content {
+          .activity-text {
+            font-size: 0.875rem;
+            color: #374151;
+            margin: 0 0 0.25rem 0;
+
+            strong {
+              font-weight: 600;
+              color: #111827;
+            }
+
+            .project-link {
+              background: none;
+              border: none;
+              color: #3b82f6;
+              text-decoration: none;
+              padding: 0;
+              font-size: inherit;
+              font-weight: 600;
+              cursor: pointer;
+
+              &:hover {
+                text-decoration: underline;
+              }
+
+              &:focus {
+                outline: 2px solid #3b82f6;
+                outline-offset: 2px;
+                border-radius: 0.125rem;
+              }
+            }
+          }
+          .activity-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+          }
+        }
+      }
+      .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.875rem;
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+
+    .dashboard-header {
+      .header-content {
+        .dashboard-title {
+          font-size: 1.5rem;
+        }
+      }
+    }
+    .metrics-section {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+}

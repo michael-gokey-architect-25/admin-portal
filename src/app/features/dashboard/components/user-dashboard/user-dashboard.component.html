@@ -1,1 +1,86 @@
-<p>user-dashboard works!</p>
+ <!-- File: src/app/features/dashboard/components/user-dashboard/user-dashboard.component.html -->
+
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1 class="dashboard-title">My Dashboard</h1>
+    <p class="dashboard-subtitle">Welcome back, <strong>{{ userName$ | async }}</strong></p>
+  </header>
+
+  <!-- Profile Card -->
+  <section class="profile-section" aria-labelledby="profile-heading">
+    <h2 id="profile-heading" class="visually-hidden">User Profile</h2>
+    <app-card [variant]="'elevated'" class="profile-card">
+      <div class="profile-content" *ngIf="user$ | async as user">
+        <div class="profile-avatar" aria-hidden="true">
+          {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+        </div>
+        <div class="profile-info">
+          <h3 class="profile-name">{{ user.firstName }} {{ user.lastName }}</h3>
+          <p class="profile-email">{{ user.email }}</p>
+          <span class="profile-role">{{ (userRole$ | async) | userRole }}</span>
+        </div>
+        <app-button variant="outline" size="sm" routerLink="/profile" aria-label="Edit profile">
+          Edit Profile
+        </app-button>
+      </div>
+    </app-card>
+  </section>
+
+  <!-- Personal Stats -->
+  <section class="stats-section" aria-labelledby="stats-heading">
+    <h2 id="stats-heading" class="visually-hidden">Personal Statistics</h2>
+    <div class="stats-grid">
+      <app-card 
+        *ngFor="let stat of personalStats"
+        [variant]="'bordered'"
+        class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon" [style.color]="stat.color" aria-hidden="true">{{ stat.icon }}</div>
+          <div class="stat-info">
+            <h3 class="stat-label">{{ stat.label }}</h3>
+            <p class="stat-value">{{ stat.value }}</p>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </section>
+
+  <!-- Recent Activity -->
+  <section class="activity-section" aria-labelledby="activity-heading">
+    <app-card title="Recent Activity">
+      <h2 id="activity-heading" class="visually-hidden">Recent Activity</h2>
+      <div class="activity-list" role="feed" aria-busy="false">
+        <div 
+          *ngFor="let activity of recentActivities; trackBy: trackByActivityId"
+          class="activity-item"
+          role="article">
+          <div class="activity-icon" aria-hidden="true">{{ activity.icon }}</div>
+          <div class="activity-content">
+            <p class="activity-action"><strong>{{ activity.action }}</strong></p>
+            <p class="activity-details">{{ activity.details }}</p>
+            <time [attr.datetime]="activity.timestamp.toISOString()" class="activity-time">
+              {{ getRelativeTime(activity.timestamp) }}
+            </time>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="actions-section" aria-labelledby="actions-heading">
+    <h2 id="actions-heading">Quick Actions</h2>
+    <div class="actions-grid">
+      <app-button variant="primary" [block]="true" aria-label="View notifications">
+        🔔 View Notifications
+      </app-button>
+      <app-button variant="outline" [block]="true" aria-label="View messages">
+        💬 View Messages
+      </app-button>
+      <app-button variant="outline" [block]="true" routerLink="/settings" aria-label="Go to settings">
+        ⚙️ Settings
+      </app-button>
+    </div>
+  </section>
+
+</div>

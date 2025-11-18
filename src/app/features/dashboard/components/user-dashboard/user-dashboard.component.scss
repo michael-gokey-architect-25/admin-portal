@@ -1,0 +1,210 @@
+// src/app/features/dashboard/components/user-dashboard/user-dashboard.component.scss */
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .dashboard-header {
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .dashboard-subtitle {
+      font-size: 1rem;
+      color: #6b7280;
+      margin: 0;
+
+      strong {
+        color: #3b82f6;
+        font-weight: 600;
+      }
+    }
+  }
+
+
+  .profile-section {
+    .profile-card {
+      .profile-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+
+        .profile-avatar {
+          width: 5rem;
+          height: 5rem;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 2rem;
+          flex-shrink: 0;
+        }
+
+        .profile-info {
+          flex: 1;
+
+          .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .profile-email {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0 0 0.5rem 0;
+          }
+
+          .profile-role {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+
+  .stats-section {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+
+      .stat-card {
+        .stat-content {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          .stat-icon {
+            font-size: 2.5rem;
+          }
+
+          .stat-info {
+            .stat-label {
+              font-size: 0.875rem;
+              color: #6b7280;
+              margin: 0 0 0.25rem 0;
+            }
+
+            .stat-value {
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: #111827;
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  .activity-section {
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+
+      .activity-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .activity-icon {
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .activity-content {
+          flex: 1;
+
+          .activity-action {
+            font-size: 0.875rem;
+            color: #111827;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .activity-details {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .activity-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+          }
+        }
+      }
+    }
+  }
+
+  .actions-section {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 1rem 0;
+    }
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+  }
+
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+
+    .dashboard-header .dashboard-title {
+      font-size: 1.5rem;
+    }
+    .profile-section .profile-card .profile-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    .stats-section .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .actions-section .actions-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+}

@@ -1,1 +1,161 @@
-<p>admin-dashboard works!</p>
+<!-- src/app/features/dashboard/components/admin-dashboard/admin-dashboard.component.html -->
+
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="dashboard-title">Admin Dashboard</h1>
+        <p class="dashboard-subtitle">
+          Welcome back, <strong>{{ userName$ | async }}</strong>
+        </p>
+      </div>
+      
+      <app-button
+        variant="outline"
+        size="sm"
+        (clicked)="refreshDashboard()"
+        aria-label="Refresh dashboard data">
+        🔄 Refresh
+      </app-button>
+    </div>
+  </header>
+
+  <!-- Statistics Cards -->
+  <section class="stats-section" aria-labelledby="stats-heading">
+    <h2 id="stats-heading" class="visually-hidden">System Statistics</h2>
+    
+    <div class="stats-grid">
+      <app-card 
+        *ngFor="let stat of stats"
+        [variant]="'bordered'"
+        class="stat-card"
+        [class]="'stat-' + stat.color">
+        
+        <div class="stat-content" role="group" [attr.aria-label]="stat.ariaLabel">
+          <div class="stat-icon" aria-hidden="true">{{ stat.icon }}</div>
+          
+          <div class="stat-info">
+            <h3 class="stat-label">{{ stat.label }}</h3>
+            <p class="stat-value">{{ stat.value }}</p>
+            
+            <div *ngIf="stat.trend" class="stat-trend" [class]="'trend-' + stat.trend">
+              <span class="trend-icon" aria-hidden="true">
+                {{ stat.trend === 'up' ? '↑' : '↓' }}
+              </span>
+              <span class="trend-value">{{ stat.trendValue }}</span>
+            </div>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="actions-section" aria-labelledby="actions-heading">
+    <h2 id="actions-heading">Quick Actions</h2>
+    
+    <div class="actions-grid">
+      <app-card 
+        [variant]="'bordered'" 
+        [hoverable]="true"
+        class="action-card"
+        role="article">
+        <div class="action-content">
+          <div class="action-icon" aria-hidden="true">👨‍💼</div>
+          <h3 class="action-title">User Management</h3>
+          <p class="action-description">
+            View, edit, and manage user accounts and permissions
+          </p>
+          <app-button
+            variant="primary"
+            size="sm"
+            (clicked)="navigateToUserManagement()"
+            aria-label="Go to user management">
+            Manage Users
+          </app-button>
+        </div>
+      </app-card>
+
+      <app-card 
+        [variant]="'bordered'" 
+        [hoverable]="true"
+        class="action-card"
+        role="article">
+        <div class="action-content">
+          <div class="action-icon" aria-hidden="true">⚙️</div>
+          <h3 class="action-title">System Settings</h3>
+          <p class="action-description">
+            Configure system-wide settings and preferences
+          </p>
+          <app-button
+            variant="primary"
+            size="sm"
+            (clicked)="navigateToSystemSettings()"
+            aria-label="Go to system settings">
+            View Settings
+          </app-button>
+        </div>
+      </app-card>
+
+      <app-card 
+        [variant]="'bordered'" 
+        [hoverable]="true"
+        class="action-card"
+        role="article">
+        <div class="action-content">
+          <div class="action-icon" aria-hidden="true">📋</div>
+          <h3 class="action-title">Audit Logs</h3>
+          <p class="action-description">
+            Review system activity and security logs
+          </p>
+          <app-button
+            variant="primary"
+            size="sm"
+            (clicked)="navigateToAuditLogs()"
+            aria-label="Go to audit logs">
+            View Logs
+          </app-button>
+        </div>
+      </app-card>
+    </div>
+  </section>
+
+  <!-- Recent Activity -->
+  <section class="activity-section" aria-labelledby="activity-heading">
+    <app-card title="Recent Activity">
+      <h2 id="activity-heading" class="visually-hidden">Recent System Activity</h2>
+      
+      <div class="activity-list" role="feed" aria-busy="false">
+        <div 
+          *ngFor="let activity of recentActivities; trackBy: trackByActivityId"
+          class="activity-item"
+          [class]="getActivityClass(activity.type)"
+          role="article"
+          [attr.aria-label]="activity.user + ' ' + activity.action + ' ' + getRelativeTime(activity.timestamp)">
+          
+          <div class="activity-icon" aria-hidden="true">
+            {{ getActivityIcon(activity.type) }}
+          </div>
+          
+          <div class="activity-content">
+            <p class="activity-text">
+              <strong>{{ activity.user }}</strong> {{ activity.action }}
+            </p>
+            <time 
+              class="activity-time"
+              [attr.datetime]="activity.timestamp.toISOString()">
+              {{ getRelativeTime(activity.timestamp) }}
+            </time>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="recentActivities.length === 0" class="empty-state">
+          <p>No recent activity to display</p>
+        </div>
+      </div>
+    </app-card>
+  </section>
+
+</div>

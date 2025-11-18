@@ -1,1 +1,181 @@
-<p>manager-dashboard works!</p>
+<!-- src/app/features/dashboard/components/manager-dashboard/manager-dashboard.component.html  -->
+
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="dashboard-title">Team Dashboard</h1>
+        <p class="dashboard-subtitle">
+          Welcome back, <strong>{{ userName$ | async }}</strong>
+        </p>
+      </div>
+      
+      <app-button
+        variant="primary"
+        size="sm"
+        (clicked)="viewTeamReports()"
+        aria-label="View team reports">
+        📊 View Reports
+      </app-button>
+    </div>
+  </header>
+
+  <!-- Team Metrics -->
+  <section class="metrics-section" aria-labelledby="metrics-heading">
+    <h2 id="metrics-heading" class="visually-hidden">Team Metrics</h2>
+    
+    <div class="metrics-grid">
+      <app-card 
+        *ngFor="let metric of teamMetrics"
+        [variant]="'bordered'"
+        class="metric-card"
+        [class]="'metric-' + metric.color">
+        
+        <div class="metric-content">
+          <div class="metric-icon" aria-hidden="true">{{ metric.icon }}</div>
+          
+          <div class="metric-info">
+            <h3 class="metric-label">{{ metric.label }}</h3>
+            <p class="metric-value">{{ metric.value }}</p>
+            <p class="metric-subtitle" *ngIf="metric.subtitle">{{ metric.subtitle }}</p>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </section>
+
+  <!-- Team Members -->
+  <section class="team-section" aria-labelledby="team-heading">
+    <app-card title="Team Members">
+      <h2 id="team-heading" class="visually-hidden">Team Members List</h2>
+      
+      <div class="team-list">
+        <table class="team-table" role="table" aria-label="Team members with status and tasks completed">
+          <thead>
+            <tr>
+              <th scope="col">Member</th>
+              <th scope="col">Role</th>
+              <th scope="col">Status</th>
+              <th scope="col">Tasks Completed</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              *ngFor="let member of teamMembers; trackBy: trackByMemberId"
+              class="team-row">
+              
+              <td>
+                <div class="member-info">
+                  <div class="member-avatar" aria-hidden="true">{{ member.avatar }}</div>
+                  <span class="member-name">{{ member.name }}</span>
+                </div>
+              </td>
+              
+              <td>{{ member.role }}</td>
+              
+              <td>
+                <span 
+                  class="status-badge"
+                  [class]="getStatusClass(member.status)"
+                  role="status"
+                  [attr.aria-label]="getStatusLabel(member.status)">
+                  {{ member.status }}
+                </span>
+              </td>
+              
+              <td>
+                <strong>{{ member.tasksCompleted }}</strong>
+              </td>
+              
+              <td>
+                <app-button
+                  variant="outline"
+                  size="sm"
+                  (clicked)="viewMemberProfile(member.id)"
+                  [attr.aria-label]="'View profile for ' + member.name">
+                  View
+                </app-button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Mobile view -->
+        <div class="team-cards">
+          <div 
+            *ngFor="let member of teamMembers; trackBy: trackByMemberId"
+            class="member-card">
+            <div class="member-card-header">
+              <div class="member-avatar" aria-hidden="true">{{ member.avatar }}</div>
+              <div class="member-details">
+                <h3 class="member-name">{{ member.name }}</h3>
+                <p class="member-role">{{ member.role }}</p>
+              </div>
+              <span 
+                class="status-badge"
+                [class]="getStatusClass(member.status)"
+                role="status"
+                [attr.aria-label]="getStatusLabel(member.status)">
+                {{ member.status }}
+              </span>
+            </div>
+            <div class="member-card-body">
+              <p class="member-stat">
+                <strong>{{ member.tasksCompleted }}</strong> tasks completed
+              </p>
+              <app-button
+                variant="outline"
+                size="sm"
+                [block]="true"
+                (clicked)="viewMemberProfile(member.id)"
+                [attr.aria-label]="'View profile for ' + member.name">
+                View Profile
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </section>
+
+  <!-- Recent Team Activity -->
+  <section class="activity-section" aria-labelledby="activity-heading">
+    <app-card title="Recent Team Activity">
+      <h2 id="activity-heading" class="visually-hidden">Recent Team Activity</h2>
+      
+      <div class="activity-list" role="feed" aria-busy="false">
+        <div 
+          *ngFor="let activity of recentActivities; trackBy: trackByActivityId"
+          class="activity-item"
+          role="article">
+          
+          <div class="activity-content">
+            <p class="activity-text">
+              <strong>{{ activity.member }}</strong> {{ activity.action }} in 
+              <button 
+                type="button"
+                class="project-link"
+                (click)="viewProject(activity.project)"
+                [attr.aria-label]="'View project: ' + activity.project">
+                {{ activity.project }}
+              </button>
+            </p>
+            <time 
+              class="activity-time"
+              [attr.datetime]="activity.timestamp.toISOString()">
+              {{ getRelativeTime(activity.timestamp) }}
+            </time>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="recentActivities.length === 0" class="empty-state">
+          <p>No recent team activity to display</p>
+        </div>
+      </div>
+    </app-card>
+  </section>
+
+</div>

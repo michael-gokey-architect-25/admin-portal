@@ -1,1 +1,88 @@
-<p>login works!</p>
+<!-- src/app/features/auth/components/login/login.component.html  -->
+
+<div class="login-container">
+  <div class="login-card">
+    <app-card>
+      <!-- Header -->
+      <div class="login-header">
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to your account to continue</p>
+      </div>
+
+      <!-- Error Alert -->
+      <app-alert 
+        *ngIf="errorMessage$ | async as error" 
+        type="error"
+        [dismissible]="false">
+        {{ error }}
+      </app-alert>
+
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        
+        <!-- Email Field -->
+        <app-input
+          label="Email Address"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          [required]="true"
+          [error]="hasError('email')"
+          [errorMessage]="getErrorMessage('email')">
+        </app-input>
+
+        <!-- Password Field -->
+        <div class="password-field">
+          <app-input
+            label="Password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Enter your password"
+            [required]="true"
+            [error]="hasError('password')"
+            [errorMessage]="getErrorMessage('password')">
+          </app-input>
+          
+          <button 
+            type="button" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            aria-label="Toggle password visibility">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" />
+            <span>Remember me</span>
+          </label>
+          
+          <a routerLink="/auth/forgot-password" class="forgot-password">
+            Forgot password?
+          </a>
+        </div>
+
+        <!-- Submit Button -->
+        <app-button
+          type="submit"
+          variant="primary"
+          size="lg"
+          [block]="true"
+          [isLoading]="isLoading$ | async"
+          [disabled]="loginForm.invalid">
+          Sign In
+        </app-button>
+
+        <!-- Register Link -->
+        <div class="register-link">
+          <span>Don't have an account?</span>
+          <a routerLink="/auth/register">Create one</a>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+</div>
+
