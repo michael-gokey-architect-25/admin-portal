@@ -1,0 +1,71 @@
+// src/app/shared/components/loading-spinner/loading-spinner.component.scss
+.spinner-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  &.spinner-wrapper-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 9999;
+  }
+
+  &.spinner-wrapper-inline {
+    display: inline-flex;
+  }
+
+  .spinner {
+    border-radius: 50%;
+    border-style: solid;
+    animation: spin 0.8s linear infinite;
+
+    &.spinner-sm {
+      width: 1rem;
+      height: 1rem;
+      border-width: 2px;
+    }
+
+    &.spinner-md {
+      width: 2rem;
+      height: 2rem;
+      border-width: 3px;
+    }
+
+    &.spinner-lg {
+      width: 3rem;
+      height: 3rem;
+      border-width: 4px;
+    }
+
+    &.spinner-primary {
+      border-color: #e5e7eb;
+      border-top-color: #3b82f6;
+    }
+
+    &.spinner-secondary {
+      border-color: #e5e7eb;
+      border-top-color: #6b7280;
+    }
+
+    &.spinner-white {
+      border-color: rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+    }
+  }
+
+  .message {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}

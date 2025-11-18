@@ -1,0 +1,6 @@
+<!-- src/app/shared/components/loading-spinner/loading-spinner.component.html -->
+
+<div [class]="getWrapperClasses()">
+  <div [class]="getSpinnerClasses()"></div>
+  <p *ngIf="message" class="message">{{ message }}</p>
+</div>

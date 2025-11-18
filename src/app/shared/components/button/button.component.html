@@ -1,0 +1,13 @@
+<!-- src/app/shared/components/button/button.component.html -->
+
+<button
+  [type]="type"
+  [disabled]="disabled || isLoading"
+  [class]="getButtonClasses()"
+  (click)="handleClick($event)"
+>
+  <span *ngIf="isLoading" class="spinner"></span>
+  <span [class.loading-text]="isLoading">
+    <ng-content></ng-content>
+  </span>
+</button>

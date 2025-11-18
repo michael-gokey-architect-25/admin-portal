@@ -1,0 +1,29 @@
+<!-- src/app/shared/components/input/input.component.html -->
+<div class="input-wrapper">
+  <label *ngIf="label" [for]="id" class="label">
+    {{ label }}
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  
+  <div class="input-container">
+    <input
+      [id]="id"
+      [type]="type"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [class.error]="hasError"
+      [value]="value"
+      (input)="onInputChange($event)"
+      (blur)="onTouched()"
+    />
+  </div>
+
+  <div *ngIf="hasError && errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="hint && !hasError" class="hint">
+    {{ hint }}
+  </div>
+</div>
+

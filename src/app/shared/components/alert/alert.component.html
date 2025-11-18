@@ -1,0 +1,23 @@
+<!-- src/app/shared/components/alert/alert.component.html -->
+
+<div *ngIf="!dismissed_state" [class]="getAlertClasses()" role="alert">
+  <div class="alert-icon">
+    <span [innerHTML]="getIcon()"></span>
+  </div>
+
+  <div class="alert-content">
+    <h4 *ngIf="title" class="alert-title">{{ title }}</h4>
+    <p class="alert-message">
+      <ng-content></ng-content>
+    </p>
+  </div>
+
+  <button
+    *ngIf="dismissible"
+    type="button"
+    class="alert-close"
+    (click)="dismiss()"
+    aria-label="Close">  ×  </button>
+</div>
+
+
