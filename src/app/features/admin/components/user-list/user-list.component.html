@@ -1,1 +1,323 @@
-<p>user-list works!</p>
+<!-- src/app/features/admin/components/user-list/user-list.component.html -->
+
+<div class="user-list-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>User Management</h1>
+      <p class="subtitle">Manage all system users, roles, and permissions</p>
+    </div>
+    <button 
+      class="btn btn-primary"
+      (click)="createNewUser()"
+      aria-label="Create a new user">
+      + Create User
+    </button>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="filter-section" role="region" aria-label="Search and filter users">
+    <form [formGroup]="filterForm" class="filter-form">
+      <!-- Search Input -->
+      <div class="search-wrapper">
+        <input 
+          type="text"
+          class="search-input"
+          placeholder="Search by name, email, or username..."
+          formControlName="search"
+          aria-label="Search users by name, email, or username"
+          aria-describedby="search-hint">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <span id="search-hint" class="sr-only">Type to filter users in real-time</span>
+      </div>
+
+      <!-- Role Filter Dropdown -->
+      <div class="filter-wrapper">
+        <label for="role-filter" class="filter-label">Filter by Role:</label>
+        <select 
+          id="role-filter"
+          class="filter-select"
+          formControlName="role"
+          aria-label="Filter users by role">
+          <option value="">All Roles</option>
+          <option *ngFor="let role of availableRoles" [value]="role">
+            {{ role | userRole }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Results Count -->
+      <div class="results-info" role="status" aria-live="polite">
+        <span *ngIf="totalUsers > 0" class="results-count">
+          {{ selectedUserIds.size > 0 ? selectedUserIds.size + ' of ' : '' }}{{ totalUsers }} user<span *ngIf="totalUsers !== 1">s</span>
+        </span>
+        <span *ngIf="totalUsers === 0" class="no-results">No users found</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- Bulk Actions Bar (visible when users are selected) -->
+  <div class="bulk-actions-bar" *ngIf="selectedUserIds.size > 0" 
+       role="region" aria-label="Bulk actions">
+    <span class="selection-info" aria-live="polite">
+      {{ selectedUserIds.size }} user<span *ngIf="selectedUserIds.size !== 1">s</span> selected
+    </span>
+    <div class="action-buttons">
+      <button 
+        class="btn btn-outline-danger"
+        (click)="confirmBulkDelete($event)"
+        [disabled]="selectedUserIds.size === 0"
+        aria-label="Delete selected users">
+        Delete Selected
+      </button>
+      <button 
+        class="btn btn-outline-secondary"
+        (click)="selectedUserIds.clear(); selectAll = false"
+        aria-label="Clear selection">
+        Clear Selection
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading$ | async" class="loading-container" role="status" aria-label="Loading users">
+    <app-loading-spinner size="lg" message="Loading users..."></app-loading-spinner>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-container" role="alert">
+    <app-alert type="error" [dismissible]="true">
+      Failed to load users: {{ error }}
+    </app-alert>
+  </div>
+
+  <!-- Desktop Table View -->
+  <div class="table-wrapper" role="region" aria-label="Users table">
+    <table class="users-table" *ngIf="(users$ | async)?.length">
+      <!-- Table Header -->
+      <thead>
+        <tr>
+          <!-- Select All Checkbox -->
+          <th class="checkbox-column">
+            <input 
+              type="checkbox"
+              class="select-all-checkbox"
+              [checked]="selectAll"
+              (change)="toggleSelectAll($event)"
+              aria-label="Select all users"
+              title="Select all users">
+          </th>
+
+          <!-- Name Column -->
+          <th class="sortable-column" 
+              (click)="onSort('name')"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="onSort('name')"
+              (keydown.space)="onSort('name')"
+              aria-sort="ascending"
+              aria-label="Sort by name">
+            Name {{ getSortIndicator('name') }}
+          </th>
+
+          <!-- Email Column -->
+          <th class="sortable-column"
+              (click)="onSort('email')"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="onSort('email')"
+              (keydown.space)="onSort('email')"
+              aria-label="Sort by email">
+            Email {{ getSortIndicator('email') }}
+          </th>
+
+          <!-- Role Column -->
+          <th class="sortable-column"
+              (click)="onSort('role')"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="onSort('role')"
+              (keydown.space)="onSort('role')"
+              aria-label="Sort by role">
+            Role {{ getSortIndicator('role') }}
+          </th>
+
+          <!-- Status Column -->
+          <th>Status</th>
+
+          <!-- Joined Date Column -->
+          <th class="sortable-column"
+              (click)="onSort('joinedDate')"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="onSort('joinedDate')"
+              (keydown.space)="onSort('joinedDate')"
+              aria-label="Sort by joined date">
+            Joined {{ getSortIndicator('joinedDate') }}
+          </th>
+
+          <!-- Actions Column -->
+          <th class="actions-column">Actions</th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody>
+        <tr *ngFor="let user of (users$ | async); trackBy: trackByUserId"
+            [class.selected]="isUserSelected(user.id)"
+            tabindex="0">
+          
+          <!-- Checkbox -->
+          <td class="checkbox-column">
+            <input 
+              type="checkbox"
+              class="row-checkbox"
+              [checked]="isUserSelected(user.id)"
+              (change)="toggleUserSelection(user.id, $event)"
+              [attr.aria-label]="'Select ' + user.firstName + ' ' + user.lastName">
+          </td>
+
+          <!-- Name -->
+          <td class="name-cell">
+            <div class="user-avatar">{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</div>
+            <div class="user-info">
+              <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+              <span class="user-username">@{{ user.username }}</span>
+            </div>
+          </td>
+
+          <!-- Email -->
+          <td class="email-cell">
+            <a href="mailto:{{ user.email }}" class="email-link">{{ user.email }}</a>
+          </td>
+
+          <!-- Role -->
+          <td class="role-cell">
+            <span class="role-badge" [attr.data-role]="user.role">
+              {{ user.role | userRole }}
+            </span>
+          </td>
+
+          <!-- Status -->
+          <td class="status-cell">
+            <span class="status-badge" 
+                  [attr.data-status]="user.status"
+                  [attr.aria-label]="'User status: ' + user.status">
+              {{ user.status | titlecase }}
+            </span>
+          </td>
+
+          <!-- Joined Date -->
+          <td class="date-cell">
+            <time [attr.datetime]="user.joinedDate | date:'yyyy-MM-dd'">
+              {{ user.joinedDate | date:'short' }}
+            </time>
+          </td>
+
+          <!-- Actions -->
+          <td class="actions-cell">
+            <div class="action-buttons" role="group" [attr.aria-label]="'Actions for ' + user.firstName + ' ' + user.lastName">
+              <button 
+                class="btn-icon btn-edit"
+                (click)="editUser(user.id)"
+                title="Edit user"
+                aria-label="Edit {{ user.firstName }} {{ user.lastName }}">
+                ✎
+              </button>
+              <button 
+                class="btn-icon btn-delete"
+                (click)="confirmDelete(user, $event)"
+                title="Delete user"
+                aria-label="Delete {{ user.firstName }} {{ user.lastName }}">
+                🗑
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="!(isLoading$ | async) && !(users$ | async)?.length" 
+         class="empty-state"
+         role="status">
+      <p>No users found matching your search criteria.</p>
+      <button class="btn btn-primary" (click)="createNewUser()" aria-label="Create a new user">
+        Create the first user
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-section" *ngIf="getTotalPages() > 1" role="navigation" aria-label="Pagination">
+    <button 
+      class="btn-pagination"
+      (click)="goToPage(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      aria-label="Previous page">
+      ← Previous
+    </button>
+    
+    <span class="pagination-info" aria-live="polite">
+      Page {{ currentPage }} of {{ getTotalPages() }}
+    </span>
+    
+    <button 
+      class="btn-pagination"
+      (click)="goToPage(currentPage + 1)"
+      [disabled]="currentPage === getTotalPages()"
+      aria-label="Next page">
+      Next →
+    </button>
+  </div>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm" role="dialog" aria-modal="true" aria-label="Confirm delete user">
+  <div class="modal-content">
+    <h2 class="modal-title">Confirm Delete</h2>
+    <p class="modal-message">
+      Are you sure you want to delete <strong>{{ userToDelete?.firstName }} {{ userToDelete?.lastName }}</strong>? 
+      This action cannot be undone.
+    </p>
+    <div class="modal-actions">
+      <button 
+        class="btn btn-outline-secondary"
+        (click)="cancelDelete()"
+        aria-label="Cancel delete operation">
+        Cancel
+      </button>
+      <button 
+        class="btn btn-danger"
+        (click)="deleteUser()"
+        aria-label="Confirm delete user">
+        Delete User
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Delete Confirmation Dialog -->
+<div class="modal-overlay" *ngIf="showBulkDeleteConfirm" role="dialog" aria-modal="true" aria-label="Confirm bulk delete users">
+  <div class="modal-content">
+    <h2 class="modal-title">Confirm Bulk Delete</h2>
+    <p class="modal-message">
+      Are you sure you want to delete <strong>{{ selectedUserIds.size }} user<span *ngIf="selectedUserIds.size !== 1">s</span></strong>? 
+      This action cannot be undone.
+    </p>
+    <div class="modal-actions">
+      <button 
+        class="btn btn-outline-secondary"
+        (click)="cancelBulkDelete()"
+        aria-label="Cancel bulk delete operation">
+        Cancel
+      </button>
+      <button 
+        class="btn btn-danger"
+        (click)="bulkDelete()"
+        aria-label="Confirm bulk delete users">
+        Delete All
+      </button>
+    </div>
+  </div>
+</div>

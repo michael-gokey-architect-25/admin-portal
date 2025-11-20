@@ -19,7 +19,7 @@ describe('AuthEffects', () => {
     effects = TestBed.inject(AuthEffects);
   });
 
-  it('should be created', () => {
+  it('should be created, AuthEffects', () => {
     expect(effects).toBeTruthy();
   });
 });

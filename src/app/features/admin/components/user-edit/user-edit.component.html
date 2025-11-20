@@ -1,1 +1,395 @@
-<p>user-edit works!</p>
+<!-- src/app/features/admin/components/user-edit/user-edit.component.html -->
+
+<div class="user-edit-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>{{ isCreateMode ? 'Create New User' : 'Edit User' }}</h1>
+      <p class="subtitle">
+        {{ isCreateMode 
+          ? 'Add a new user to the system' 
+          : 'Update user information and permissions' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container" role="status" aria-label="Loading user">
+    <app-loading-spinner size="lg" message="Loading user..."></app-loading-spinner>
+  </div>
+
+  <!-- Form Content -->
+  <div *ngIf="!isLoading" class="form-content">
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success" role="alert">
+      <span class="alert-icon">✓</span>
+      {{ successMessage }}
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-error" role="alert">
+      <span class="alert-icon">⚠</span>
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="submitForm()" class="user-form">
+      <!-- Two Column Layout -->
+      <div class="form-grid">
+        
+        <!-- Column 1: Basic Information -->
+        <fieldset class="form-section">
+          <legend class="section-title">Basic Information</legend>
+
+          <!-- First Name -->
+          <div class="form-group">
+            <label for="firstName" class="form-label">
+              First Name
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <input
+              id="firstName"
+              type="text"
+              class="form-input"
+              [class.is-invalid]="hasError('firstName')"
+              formControlName="firstName"
+              placeholder="Enter first name"
+              aria-label="First name"
+              aria-describedby="firstName-error">
+            <span id="firstName-error" class="error-message" *ngIf="hasError('firstName')">
+              {{ getErrorMessage('firstName') }}
+            </span>
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group">
+            <label for="lastName" class="form-label">
+              Last Name
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <input
+              id="lastName"
+              type="text"
+              class="form-input"
+              [class.is-invalid]="hasError('lastName')"
+              formControlName="lastName"
+              placeholder="Enter last name"
+              aria-label="Last name"
+              aria-describedby="lastName-error">
+            <span id="lastName-error" class="error-message" *ngIf="hasError('lastName')">
+              {{ getErrorMessage('lastName') }}
+            </span>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email" class="form-label">
+              Email Address
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              class="form-input"
+              [class.is-invalid]="hasError('email')"
+              [readonly]="!isCreateMode"
+              formControlName="email"
+              placeholder="Enter email address"
+              aria-label="Email address"
+              aria-describedby="email-hint email-error">
+            <span id="email-hint" class="form-hint" *ngIf="!isCreateMode">
+              Email cannot be changed after user creation
+            </span>
+            <span id="email-error" class="error-message" *ngIf="hasError('email')">
+              {{ getErrorMessage('email') }}
+            </span>
+          </div>
+
+          <!-- Username -->
+          <div class="form-group">
+            <label for="username" class="form-label">
+              Username
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <input
+              id="username"
+              type="text"
+              class="form-input"
+              [class.is-invalid]="hasError('username')"
+              [readonly]="!isCreateMode"
+              formControlName="username"
+              placeholder="Enter username"
+              aria-label="Username"
+              aria-describedby="username-hint username-error">
+            <span id="username-hint" class="form-hint" *ngIf="!isCreateMode">
+              Username cannot be changed after user creation
+            </span>
+            <span id="username-error" class="error-message" *ngIf="hasError('username')">
+              {{ getErrorMessage('username') }}
+            </span>
+          </div>
+
+          <!-- Password (only in create mode or when editing) -->
+          <div class="form-group">
+            <label for="password" class="form-label">
+              Password
+              <span class="required" [class.optional]="!isCreateMode" aria-label="required">
+                {{ isCreateMode ? '*' : '(optional)' }}
+              </span>
+            </label>
+            <div class="password-wrapper">
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-input"
+                [class.is-invalid]="hasError('password')"
+                formControlName="password"
+                [placeholder]="isCreateMode ? 'Create a strong password' : 'Leave blank to keep current'"
+                aria-label="Password"
+                aria-describedby="password-hint password-error">
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                {{ showPassword ? '🙈' : '👁' }}
+              </button>
+            </div>
+            <span id="password-hint" class="form-hint">
+              Password must be at least 8 characters and include uppercase, lowercase, number, and special character
+            </span>
+            <span id="password-error" class="error-message" *ngIf="hasError('password')">
+              {{ getErrorMessage('password') }}
+            </span>
+          </div>
+
+          <!-- Password Confirm -->
+          <div class="form-group" *ngIf="userForm.get('password')?.value">
+            <label for="passwordConfirm" class="form-label">
+              Confirm Password
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <div class="password-wrapper">
+              <input
+                id="passwordConfirm"
+                [type]="showPasswordConfirm ? 'text' : 'password'"
+                class="form-input"
+                [class.is-invalid]="hasError('passwordConfirm')"
+                formControlName="passwordConfirm"
+                placeholder="Re-enter password"
+                aria-label="Confirm password"
+                aria-describedby="passwordConfirm-error">
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordConfirmVisibility()"
+                [attr.aria-label]="showPasswordConfirm ? 'Hide password' : 'Show password'">
+                {{ showPasswordConfirm ? '🙈' : '👁' }}
+              </button>
+            </div>
+            <span id="passwordConfirm-error" class="error-message" *ngIf="hasError('passwordConfirm')">
+              {{ getErrorMessage('passwordConfirm') }}
+            </span>
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input
+              id="phone"
+              type="tel"
+              class="form-input"
+              formControlName="phone"
+              placeholder="Enter phone number"
+              aria-label="Phone number">
+          </div>
+
+          <!-- Department -->
+          <div class="form-group">
+            <label for="department" class="form-label">Department</label>
+            <input
+              id="department"
+              type="text"
+              class="form-input"
+              formControlName="department"
+              placeholder="Enter department"
+              aria-label="Department">
+          </div>
+        </fieldset>
+
+        <!-- Column 2: Role & Status -->
+        <fieldset class="form-section">
+          <legend class="section-title">Role & Status</legend>
+
+          <!-- Role Selection -->
+          <div class="form-group">
+            <label for="role" class="form-label">
+              User Role
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <div class="role-selection">
+              <select
+                id="role"
+                class="form-select"
+                [class.is-invalid]="hasError('role')"
+                formControlName="role"
+                aria-label="Select user role"
+                aria-describedby="role-error">
+                <option *ngFor="let role of availableRoles" [value]="role">
+                  {{ role | userRole }}
+                </option>
+              </select>
+              <button
+                type="button"
+                class="btn-info"
+                (click)="showRoleInfoDialog(userForm.get('role')?.value)"
+                aria-label="Show information about selected role">
+                ℹ
+              </button>
+            </div>
+            <span id="role-error" class="error-message" *ngIf="hasError('role')">
+              {{ getErrorMessage('role') }}
+            </span>
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label for="status" class="form-label">
+              Account Status
+              <span class="required" aria-label="required">*</span>
+            </label>
+            <select
+              id="status"
+              class="form-select"
+              [class.is-invalid]="hasError('status')"
+              formControlName="status"
+              aria-label="Select account status">
+              <option *ngFor="let option of statusOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Permissions Section -->
+          <fieldset class="permissions-section">
+            <legend class="permissions-title">Permissions</legend>
+            <p class="permissions-hint">
+              Permissions are automatically assigned based on the selected role
+            </p>
+
+            <!-- Manage Users -->
+            <div class="permission-item">
+              <input
+                id="canManageUsers"
+                type="checkbox"
+                class="permission-checkbox"
+                formControlName="canManageUsers"
+                [disabled]="userForm.get('canManageUsers')?.disabled"
+                aria-label="Can manage users">
+              <label for="canManageUsers" class="permission-label">
+                Manage Users
+                <span class="permission-desc">Create, edit, and delete user accounts</span>
+              </label>
+            </div>
+
+            <!-- View Reports -->
+            <div class="permission-item">
+              <input
+                id="canViewReports"
+                type="checkbox"
+                class="permission-checkbox"
+                formControlName="canViewReports"
+                [disabled]="userForm.get('canViewReports')?.disabled"
+                aria-label="Can view reports">
+              <label for="canViewReports" class="permission-label">
+                View Reports
+                <span class="permission-desc">Access system reports and analytics</span>
+              </label>
+            </div>
+
+            <!-- Manage Settings -->
+            <div class="permission-item">
+              <input
+                id="canManageSettings"
+                type="checkbox"
+                class="permission-checkbox"
+                formControlName="canManageSettings"
+                [disabled]="userForm.get('canManageSettings')?.disabled"
+                aria-label="Can manage settings">
+              <label for="canManageSettings" class="permission-label">
+                Manage Settings
+                <span class="permission-desc">Access and modify system settings</span>
+              </label>
+            </div>
+          </fieldset>
+        </fieldset>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!userForm.valid || isSaving"
+          aria-label="Save user">
+          <span *ngIf="!isSaving">{{ isCreateMode ? 'Create User' : 'Save Changes' }}</span>
+          <span *ngIf="isSaving">Saving...</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="resetForm()"
+          [disabled]="isSaving"
+          aria-label="Reset form">
+          Reset
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="cancelEdit()"
+          [disabled]="isSaving"
+          aria-label="Cancel editing">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Role Information Dialog -->
+<div class="modal-overlay" *ngIf="showRoleInfo" role="dialog" aria-modal="true" aria-label="Role information">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ selectedRoleForInfo | userRole }} Role</h2>
+      <button
+        type="button"
+        class="btn-close"
+        (click)="closeRoleInfoDialog()"
+        aria-label="Close dialog">
+        ✕
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="role-description">
+        <strong>Permissions for {{ selectedRoleForInfo | userRole }}:</strong>
+      </p>
+      <ul class="permissions-list">
+        <li *ngFor="let permission of getRolePermissions(selectedRoleForInfo!)">
+          {{ formatPermission(permission) }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="closeRoleInfoDialog()"
+        aria-label="Close role information">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
